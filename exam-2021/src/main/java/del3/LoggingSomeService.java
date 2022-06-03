@@ -2,13 +2,15 @@ package del3;
 
 public class LoggingSomeService implements SomeService {
 
-	// Add needed fields here
+	private final SomeService delegate;
+	private final Logger logger;
 
-	/*
+	/**
 	 * Creates a LoggingSomeService object with the given delegate and logger
 	 */
 	public LoggingSomeService(SomeService delegate, Logger logger) {
-		// TODO
+		this.delegate = delegate;
+		this.logger = logger;
 	}
 
 	@Override
@@ -19,8 +21,10 @@ public class LoggingSomeService implements SomeService {
 	 * @return A string
 	 */
 	public String getAMagicString() {
-		// TODO
-		return null;
+		String magicString = delegate.getAMagicString();
+		logger.log(magicString);
+
+		return magicString;
 	}
 
 	/**
@@ -31,8 +35,10 @@ public class LoggingSomeService implements SomeService {
 	 */
 	@Override
 	public int getAMagicNumber() {
-		// TODO
-		return 0;
+		int magicNumber = delegate.getAMagicNumber();
+		logger.log(String.valueOf(magicNumber));
+
+		return magicNumber;
 	}
 	
 	public static void main(String [] args) {

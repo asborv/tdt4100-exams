@@ -18,4 +18,9 @@ public class Medal {
 	public String getMetal() {
 		return metal;
 	}
+
+	@Override
+	public String toString() {
+		return metal;
+	}
 }

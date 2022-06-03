@@ -12,8 +12,7 @@ public class AthleteComparators {
 	 *          comparator, Ane should come before Berit
 	 */
 	public static Comparator<Athlete> getSimpleComparator() {
-		// TODO
-		return null;
+		return Comparator.comparing(Athlete::getName);
 	}
 
 	/**
@@ -32,8 +31,11 @@ public class AthleteComparators {
 	 *          The spelling and order of the medals can be seen in the list validMetals in the Medal class. 
 	 */
 	public static Comparator<Athlete> getAdvancedComparator() {
-		// TODO
-		return null;
+		
+		return Comparator.comparing((Athlete a) -> a.getMedalCount("Gold"), Comparator.reverseOrder())
+										 .thenComparing((Athlete a) -> a.getMedalCount("Silver"), Comparator.reverseOrder())
+										 .thenComparing((Athlete a) -> a.getMedalCount("Bronze"), Comparator.reverseOrder())
+										 .thenComparing(getSimpleComparator());
 	}
 
 	public static void main(String[] args) {
@@ -52,7 +54,5 @@ public class AthleteComparators {
 		System.out.println(athletes);
 		Collections.sort(athletes, getAdvancedComparator());
 		System.out.println(athletes);
-
 	}
-
 }

@@ -27,4 +27,14 @@ public class Athlete {
 		return name;
 	}
 
+	public int getMedalCount(String metal) {
+		return (int) medals.stream()
+											 .filter(m -> m.getMetal().equals(metal))
+											 .count();
+	}
+
+	@Override
+		public String toString() {
+			return name + ": " + medals;
+	}
 }
