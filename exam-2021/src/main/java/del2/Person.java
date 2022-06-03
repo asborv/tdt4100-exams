@@ -16,8 +16,7 @@ public class Person {
 	 * @return the street name of this person
 	 */
 	public String getStreetName() {
-		// TODO 
-		return null;
+		return address.getStreetName();
 	}
 
 	/**
@@ -26,13 +25,13 @@ public class Person {
 	 * @param streetName The street name to update
 	 */
 	public void setStreetName(String streetName) {
-		// TODO
+		Address address = new Address(streetName, getStreetNumber());
+		this.address = address;
 	}
 	
 	
 	public int getStreetNumber() {
-		// TODO 
-		return 0;
+		return address.getStreetNumber();
 	}
 
 	/**
@@ -43,7 +42,7 @@ public class Person {
 	 * @throws IllegalArgumentException If number is not larger than 0.
 	 */
 	public void setStreetNumber(int streetNumber) {
-		// TODO
+		Address address = new Address(getStreetName(), streetNumber);
 	}
 
 	public static void main(String[] args) {

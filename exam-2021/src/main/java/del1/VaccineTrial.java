@@ -39,12 +39,12 @@ public class VaccineTrial {
 	public boolean isMoreEffectiveThanLimit(double limit) {
 
 		if (limit < 0 || limit > 1) throw new IllegalArgumentException("Limist must be in range [0, 1]");
-
+		
 		// Assumes safe to cast to int
 		int nVaccineGotSick = (int) volunteers.stream()
-																			 .filter(Predicate.not(VaccineTrialVolunteer::isPlacebo))
-																			 .filter(VaccineTrialVolunteer::gotSick)
-																			 .count();
+																			    .filter(Predicate.not(VaccineTrialVolunteer::isPlacebo))
+																			    .filter(VaccineTrialVolunteer::gotSick)
+																			    .count();
 
 		int nGotSick = (int) volunteers.stream()
 																	 .filter(VaccineTrialVolunteer::gotSick)
