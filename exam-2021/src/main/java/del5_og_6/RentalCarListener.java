@@ -1,16 +1,19 @@
 package del5_og_6;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /* RentalCar listeners listens to changes in Status for all userNames.*/
 public class RentalCarListener implements StatusListener {
 
-	// TODO - Add any needed fields here
+	private final Map<String, String> userStatus = new HashMap<>();
 
 	@Override
 	/**
 	 * Method that should be called when a given userName has updated its status.
 	 */
 	public void statusChanged(String username, String oldStatus, String newStatus) {
-		/// TODO
+		userStatus.put(username, newStatus);
 	}
 
 	/**
@@ -22,7 +25,8 @@ public class RentalCarListener implements StatusListener {
 	 * @return The discount the user qualifies for.
 	 */
 	public int getDiscount(String username) {
-		// TODO
-		return 0;
+		return userStatus.get(username).equals("Gold")
+			? 100
+			: 0;
 	}
 }

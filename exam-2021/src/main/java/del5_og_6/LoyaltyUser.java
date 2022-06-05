@@ -1,14 +1,16 @@
 package del5_og_6;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LoyaltyUser {
 	private String username;
 	private int points;
 	private String status;
 	public static List<String> validStatuses = Arrays.asList("Basic", "Gold", "Silver", "Platinum");
-	// TODO - Add any extra needed fields here
+	Map<StatusListener, String> listeners = new HashMap<>();
 
 	public LoyaltyUser(String username) {
 		this.username = username;
@@ -38,11 +40,10 @@ public class LoyaltyUser {
 
 	/**
 	 * Checks whether the user qualifies for a status upgrade/downgrade.
-	 * 
-	 * TODO: If the user qualifies for a new status all observers interested in the new or old
-	 * status should be notified
 	 */
 	public void checkForStatusUpgrade() {
+		String oldStatus = status;
+
 		if (this.points <= 1000) {
 			this.status = "Basic";
 		}
@@ -55,6 +56,8 @@ public class LoyaltyUser {
 		if (this.points > 10000) {
 			this.status = "Platinum";
 		}
+
+		fireStatusChanged(oldStatus, status);
 	}
 
 	/**
@@ -69,8 +72,10 @@ public class LoyaltyUser {
 	 * @throws IllegalArgumentException If the status is not valid
 	 */
 	public void addListener(StatusListener listener, String status) {
-		// TODO
+		if (!validStatuses.contains(status)) throw new IllegalArgumentException("Must have valid status");
 
+		// Will override if exists, write new if not
+		listeners.put(listener, status);
 	}
 
 	/**
@@ -79,7 +84,7 @@ public class LoyaltyUser {
 	 * @param listener The listener to remove
 	 */
 	public void removeListener(StatusListener listener) {
-		// TODO
+		listeners.remove(listener);
 	}
 
 	/**
@@ -92,7 +97,13 @@ public class LoyaltyUser {
 	 * @param newStatus The new status of the user
 	 */
 	private void fireStatusChanged(String oldStatus, String newStatus) {
-		// TODO
+		if (oldStatus.equals(newStatus)) return;
+
+		listeners.forEach((listener, status) -> {
+			if (status.equals(oldStatus) || status.equals(newStatus)) {
+				listener.statusChanged(username, oldStatus, newStatus);
+			}
+		});
 	}
 	
 	public static void main(String[] args) {
@@ -109,6 +120,6 @@ public class LoyaltyUser {
 		
 		// Should be 0
 		System.out.println(listener.getDiscount("test2"));
-		
+		user.fireStatusChanged("Bronze", "Gold");
 	}
 }
