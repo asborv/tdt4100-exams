@@ -2,8 +2,10 @@ package del7_og_8;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.IntStream;
 
 public class UniversityHandbook {
 
@@ -36,8 +38,44 @@ public class UniversityHandbook {
 			while (scanner.hasNextLine()) {
 				String line = scanner.nextLine();
 				String[] details = line.split(",");
-				// TODO - Continue implementation here
+				
+				// Parse and add course, assume OK
+				String courseName = details[0];
+				double avg = Double.parseDouble(details[1]);
+				Course course = parseCourse(courseName, avg);
+				addCourse(course);
+
+				// Add all prerequisites, with default avg 0
+				Arrays.stream(Arrays.copyOfRange(details, 2, details.length))
+							.map(this::parseCourse) 		// Uses default value 0 for avg
+							.forEach(c -> {
+								addCourse(c);							// Adds or overwrites course in list
+								course.addPrequisite(c);  // Adds prereq to course
+							});
 			}
+		}
+	}
+
+	private Course parseCourse(String courseName, double avg) {
+		return new Course(courseName, avg);
+	}
+
+	private Course parseCourse(String courseName) {
+		return parseCourse(courseName, 0);
+	}
+
+	private void addCourse(Course course) {
+		// Index of course if registered, -1 if new
+		int courseIndex = IntStream.range(0, courses.size())
+															 .filter(i -> courses.get(i).getCourseName().equals(course.getCourseName()))
+															 .findFirst()
+															 .orElse(-1);
+
+		// Add new course, or overwrite with average
+		if (courseIndex == -1) {
+			courses.add(course);
+		} else {
+			courses.set(courseIndex, course);
 		}
 	}
 
@@ -49,14 +87,17 @@ public class UniversityHandbook {
 	 * @return The course with the given name
 	 */
 	public Course getCourse(String courseName) {
-		// TODO
-		return null;
+		return courses.stream()
+									.filter(c -> c.getCourseName().equals(courseName))
+									.findAny()
+									.orElse(null);
 	}
 
 	public static void main(String[] args) {
 		UniversityHandbook handbook = new UniversityHandbook();
 		// Reads inn all the files from the course
 		handbook.readFromInputStream(handbook.getClass().getResourceAsStream("courses.txt"));
+		System.out.println(handbook.courses);
+		System.out.println(handbook.getCourse("TDT4109"));
 	}
-
 }
