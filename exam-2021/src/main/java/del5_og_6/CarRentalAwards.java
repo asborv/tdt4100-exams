@@ -7,7 +7,7 @@ import java.util.Map;
 public class CarRentalAwards extends LoyaltyAward {
 
 	private Map<Integer, Integer> carBrandToPoints = Map.of(1, 1, 2, 10, 3, 100, 4, 200, 5, 500);
-	private List<String> validNames = Arrays.asList("CarRentalAgency1", "CarRentalAgency2");
+	private static List<String> validNames = Arrays.asList("CarRentalAgency1", "CarRentalAgency2");
 
 	public CarRentalAwards(String awardName) {
 		super(awardName);
@@ -43,7 +43,7 @@ public class CarRentalAwards extends LoyaltyAward {
 	public void awardPoints(int carBrand, LoyaltyUser loyaltyUser) {
 		Integer points = carBrandToPoints.get(carBrand);
 		if (points != null) {
-			awardPoints(points, loyaltyUser);
+			super.awardPoints(points, loyaltyUser);
 		}
 	}
 
