@@ -1,5 +1,6 @@
 package stuff;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -41,5 +42,11 @@ public class Summer {
 			diff = diff - nums.get(i);
 		}
 		return diff;
+	}
+
+	public static void main(String[] args) {
+		Summer s = new Summer();
+  	List<Integer> emptyList = new ArrayList<>();
+		s.sum(emptyList);
 	}
 }

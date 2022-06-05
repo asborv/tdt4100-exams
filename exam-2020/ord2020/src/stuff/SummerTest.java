@@ -1,5 +1,8 @@
 package stuff;
 
+import static org.junit.Assert.fail;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
@@ -14,7 +17,16 @@ public class SummerTest {
 
 	@Test
 	public void testSumMistake() {
-		// TODO: reveal mistake in sum method
+		// Doesn't check for empty list. Uncaught exception
+		List<Integer> emptyList = new ArrayList<>();
+		Assert.assertEquals(0, Summer.sum(emptyList));
+	}
+
+	@Test
+	public void testSumMistakeIterator() {
+		// Doesn't check for empty list. Uncaught exception
+		Iterable<Integer> emptyList = new ArrayList<>();
+		Assert.assertEquals(0, (new Summer()).sum(emptyList));
 	}
 
 	@Test
@@ -22,8 +34,8 @@ public class SummerTest {
 		Assert.assertEquals(0, Summer.difference(List.of(6, 1, 2, 3)));
 	}
 
-	@Test
+	@Test(expected = IllegalArgumentException.class)
 	public void testDifferenceMistake() {
-		// TODO: reveal mistake in difference method
+		int diff = Summer.difference(new ArrayList<Integer>());
 	}
 }
