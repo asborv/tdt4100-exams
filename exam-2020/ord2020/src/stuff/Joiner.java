@@ -1,5 +1,6 @@
 package stuff;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,6 +40,10 @@ public class Joiner {
 	 */
 	public static String join(final Iterator<String> strings, final String mainSeparator, final String lastSeparator) {
 		StringBuilder result = new StringBuilder("");
+		if (!strings.hasNext()) return result.toString();
+
+		// Safe because of check above, and ensures result doesn't start with separator
+		result.append(strings.next());
 
 		while (strings.hasNext()) {
 			String string = strings.next();
@@ -64,7 +69,7 @@ public class Joiner {
 	 * @return the joined strings
 	 */
 	public String join(final Iterable<String> strings) {
-		return "";
+		return join(strings.iterator(), mainSeparator, lastSeparator);
 	}
 
 	/**
@@ -73,7 +78,7 @@ public class Joiner {
 	 * @return the joined strings
 	 */
 	public String join(final String... strings) {
-		return "";
+		return join(Arrays.stream(strings).iterator(), mainSeparator, lastSeparator);
 	}
 
 	public static void main(String[] args) {
@@ -81,5 +86,6 @@ public class Joiner {
 		Iterator<String> strings = List.of("one", "two", "three", "four").iterator();
 
 		System.out.println(j.join(strings));
+		System.out.println(j.join("we", "are", "the", "champions"));
 	}
 }
