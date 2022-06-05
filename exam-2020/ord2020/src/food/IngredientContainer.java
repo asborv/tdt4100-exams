@@ -3,26 +3,30 @@ package food;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 
 /**
  * Generic container of ingredients.
  */
 public class IngredientContainer implements Ingredients {
 
-	// TODO: necessary declarations and constructors
+	private final Map<String, Double> ingredients = new HashMap<>();
 
 	/**
 	 * Initializes a new, empty IngredientContainer.
 	 */
-	public IngredientContainer() {
-		// TODO
-	}
+	public IngredientContainer() {}
 
 	/**
 	 * Initializes a new IngredientContainer.
 	 * @param ingredients Initial ingredients in the container
 	 */
 	public IngredientContainer(Ingredients ingredients) {
+		ingredients.getIngredientNames()
+							 .stream()
+							 .forEach(ingredient -> addIngredient(ingredient, getIngredientAmount(ingredient)));
 	}
 
 	/**
@@ -30,10 +34,16 @@ public class IngredientContainer implements Ingredients {
 	 *
 	 * @param ingredient The name of the ingredient to add
 	 * @param amount The amount of the ingredient to add
-	 * @throws (fitting subclass of) RuntimeException if amount cannot be removed from this
+	 * @throws IllegalargumentException if amount is negative
 	 */
 	public void addIngredient(String ingredient, double amount) {
-		// TODO
+		if (amount < 0) throw new IllegalArgumentException("Amount cannot be negaitve");
+
+		if (ingredients.get(ingredient) == null) {
+			ingredients.put(ingredient, amount);
+		} else {
+			ingredients.compute(ingredient, (k, v) -> v + amount);
+		}
 	}
 
 	/**
@@ -46,7 +56,12 @@ public class IngredientContainer implements Ingredients {
 	 * @throws IllegalArgumentException if amount cannot be removed from this
 	 */
 	public void removeIngredient(String ingredient, double amount) {
-		// TODO
+		if (amount > getIngredientAmount(ingredient) || !ingredients.containsKey(ingredient)) {
+			throw new IllegalArgumentException();
+		}
+
+		ingredients.compute(ingredient, (k, v) -> v - amount);
+		if (ingredients.get(ingredient) == 0.0) ingredients.remove(ingredient);
 	}
 
 	/**
@@ -54,7 +69,7 @@ public class IngredientContainer implements Ingredients {
 	 */
 	@Override
 	public Iterable<String> ingredientNames() {
-		// TODO
+		return ingredients.keySet();
 	}
 
 	/**
@@ -62,7 +77,7 @@ public class IngredientContainer implements Ingredients {
 	 */
 	@Override
 	public Collection<String> getIngredientNames() {
-		// TODO
+		return ingredients.keySet();
 	}
 
 	/**
@@ -72,7 +87,7 @@ public class IngredientContainer implements Ingredients {
 	 */
 	@Override
 	public double getIngredientAmount(String ingredient) {
-		// TODO
+		return ingredients.computeIfAbsent(ingredient, x -> 0.0);
 	}
 
 	/**
@@ -88,7 +103,13 @@ public class IngredientContainer implements Ingredients {
 	 */
 	@Override
 	public String toString() {
-		// TODO
+		StringBuilder sb = new StringBuilder();
+
+		ingredients.entrySet()
+							 .stream()
+							 .forEach(e -> sb.append(e.getKey() + ": " + e.getValue() + "\n"));
+
+	return sb.toString();
 	}
 
 	/**
@@ -97,7 +118,12 @@ public class IngredientContainer implements Ingredients {
 	 * @param ingredients the ingredients to add
 	 */
 	public void addIngredients(Ingredients ingredients) {
-		// TODO
+		ingredients.getIngredientNames()
+							 .stream()
+							 .forEach(ingredient -> addIngredient(
+								 												ingredient,
+																				ingredients.getIngredientAmount(ingredient)
+																			));
 	}
 
 	/**
@@ -107,7 +133,12 @@ public class IngredientContainer implements Ingredients {
 	 * @throws IllegalArgumentException if this does not contain enough of any of the ingredients (without changing this)
 	 */
 	public void removeIngredients(Ingredients ingredients) {
-		// TODO
+		ingredients.getIngredientNames()
+							 .stream()
+							 .forEach(ingredient -> removeIngredient(
+																				ingredient,
+																				ingredients.getIngredientAmount(ingredient)
+																			));
 	}
 
 	/**
@@ -117,7 +148,10 @@ public class IngredientContainer implements Ingredients {
 	 */
 	@Override
 	public boolean containsIngredients(Ingredients other) {
-		// TODO
+		return other.getIngredientNames()
+								.stream()
+								.allMatch(ingredient -> getIngredientAmount(ingredient) >=
+																	other.getIngredientAmount(ingredient));
 	}
 
 	/**
@@ -127,7 +161,19 @@ public class IngredientContainer implements Ingredients {
 	 */
 	@Override
 	public Ingredients missingIngredients(Ingredients other) {
-		// TODO
+		if (other.containsIngredients(this)) return null;
+
+		IngredientContainer missing = new IngredientContainer();
+		
+		getIngredientNames().stream()
+												.forEach(ingredient -> {
+													double diff = getIngredientAmount(ingredient) -
+																	other.getIngredientAmount(ingredient);
+													
+													if (diff > 0) missing.addIngredient(ingredient, diff);
+												});
+
+    return missing;
 	}
 
 	/**
@@ -139,7 +185,16 @@ public class IngredientContainer implements Ingredients {
 	 */
 	@Override
 	public Ingredients scaleIngredients(double scale) {
-		// TODO
+		IngredientContainer scaled = new IngredientContainer();
+
+		getIngredientNames()
+			.stream()
+			.forEach(ingredient -> scaled.addIngredient(
+				ingredient,
+				getIngredientAmount(ingredient) * scale
+			));
+	
+		return scaled;
 	}
 	
 	
@@ -148,6 +203,8 @@ public class IngredientContainer implements Ingredients {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+
+		
 		
 		final IngredientContainer container = new IngredientContainer();
 		container.addIngredient("food1", 12.0);
@@ -166,7 +223,5 @@ public class IngredientContainer implements Ingredients {
 		container.removeIngredient("food1", 10);
 		System.out.println(container);
 		assertEquals(2.0, container.getIngredientAmount("food1"), 0.0001);
-		
-		
 	}
 }
