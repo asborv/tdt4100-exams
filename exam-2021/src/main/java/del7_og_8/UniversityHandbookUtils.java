@@ -1,6 +1,5 @@
 package del7_og_8;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -17,8 +16,9 @@ public class UniversityHandbookUtils {
 	 * @return A collection of courses that satisfy the predicate.
 	 */
 	public static Collection<Course> getCoursesWithPredicate(Collection<Course> courses, Predicate<Course> p) {
-		// TODO
-		return new ArrayList<>();
+		return courses.stream()
+									.filter(p)
+									.toList();
 	}
 
 	/**
@@ -28,9 +28,7 @@ public class UniversityHandbookUtils {
 	 * @return A collection of course without any prerequisites
 	 */
 	public static Collection<Course> getNonPrequisiteCourses(Collection<Course> courses) {
-		// TODO
-		return new ArrayList<>();
-
+		return getCoursesWithPredicate(courses, c -> c.getPrerequisites().size() == 0);
 	}
 	
 	/**
@@ -48,8 +46,20 @@ public class UniversityHandbookUtils {
 	 * @return whether the courses contains an impossible course
 	 */
 	public static boolean containsImpossibleCourse(Collection<Course> courses) {
-		// TODO
-		return false;
+
+		return courses.stream()
+									.filter(UniversityHandbookUtils::isImpossible)
+									.findAny()
+									.isPresent();
+	}
+
+	private static boolean isImpossible(Course course) {
+		return course.getPrerequisites()
+								 .stream()
+								 .map(Course::getPrerequisites)
+								 .filter(ps -> ps.contains(course))
+								 .findAny()
+								 .isPresent();
 	}
 	
 	public static void main(String[] args) {
@@ -71,10 +81,6 @@ public class UniversityHandbookUtils {
 		System.out.println(UniversityHandbookUtils.getNonPrequisiteCourses(coursesWithImpossible));
 		System.out.println(UniversityHandbookUtils.containsImpossibleCourse(coursesWithImpossible));
 		System.out.println(UniversityHandbookUtils.containsImpossibleCourse(nonImpossibleCourses));
-
-
-		
-
 	} 
 
 }
