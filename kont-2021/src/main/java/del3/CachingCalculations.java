@@ -1,9 +1,16 @@
 package del3;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class CachingCalculations implements Calculations {
 
+	private Calculations delegate;
+	private Map<Integer, Integer> memos1 = new HashMap<>();
+	private Map<Integer, Integer> memos2 = new HashMap<>();
+
 	public CachingCalculations(Calculations delegate) {
-		// TODO
+		this.delegate = delegate;
 	}
 
 	@Override
@@ -15,8 +22,7 @@ public class CachingCalculations implements Calculations {
 	 * @returns the calculation applied to the argument
 	 */
 	public int getCalculation1(int number) {
-		// TODO
-		return 0;
+		return memos1.computeIfAbsent(number, n -> delegate.getCalculation1(n));
 	}
 
 	@Override
@@ -28,8 +34,7 @@ public class CachingCalculations implements Calculations {
 	 * @returns the calculation applied to the argument
 	 */
 	public int getCalculation2(int number) {
-		// TODO
-		return 0;
+		return memos2.computeIfAbsent(number, n -> delegate.getCalculation2(n));
 
 	}
 
