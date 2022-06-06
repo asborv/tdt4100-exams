@@ -1,9 +1,15 @@
 package del1;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class VoterCounter {
 
-	// Add any needed fields here
 	public static final String TIE_RESULT = "TIE";
+	private Map<String, Integer> candidates = new HashMap<>();
 
 	/**
 	 * Register a candidate to the poll
@@ -11,7 +17,7 @@ public class VoterCounter {
 	 * @param candidate the new candidate to add
 	 */
 	public void addCandidate(String candidate) {
-		// TODO
+		candidates.putIfAbsent(candidate, 0);
 	}
 
 	/**
@@ -22,7 +28,7 @@ public class VoterCounter {
 	 * @throws IllegalArgumentException if the candidate is not registered
 	 */
 	public void castVote(String candidate) {
-		// TODO
+		candidates.computeIfPresent(candidate, (k, v) -> v + 1);
 	}
 
 	/**
@@ -37,8 +43,13 @@ public class VoterCounter {
 	 * Candidate2-6
 	 */
 	public String getFormattedResults() {
-		// TODO
-		return null;
+		StringBuilder out = new StringBuilder();
+
+		candidates.entrySet()
+							.stream()
+							.forEach(e -> out.append(String.format("%s-%d", e.getKey(), e.getValue())));
+
+		return out.toString();
 	}
 
 	/**
@@ -49,8 +60,7 @@ public class VoterCounter {
 	 *         candidate is not registered
 	 */
 	public Integer getNumberOfVotes(String candidate) {
-		// TODO
-		return 0;
+		return candidates.getOrDefault(candidate, 0);
 	}
 
 	/**
@@ -60,8 +70,23 @@ public class VoterCounter {
 	 *         TIE_RESULT field. Return null if there are no candidates.
 	 */
 	public String getWinner() {
-		// TODO
-		return null;
+		if (candidates.isEmpty()) return TIE_RESULT;
+
+		int max = candidates.entrySet()
+												.stream()
+												.mapToInt(Map.Entry::getValue)
+												.max()
+												.orElse(-1);
+
+		List<String> maxCandidates = candidates.entrySet()
+																					 .stream()
+																					 .filter(e -> e.getValue() == max)
+																					 .map(Map.Entry::getKey)
+																					 .toList();
+
+		return maxCandidates.size() == 1
+			? maxCandidates.get(0)
+			: TIE_RESULT;
 	}
 
 	public static void main(String[] args) {
