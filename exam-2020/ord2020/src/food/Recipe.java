@@ -21,7 +21,14 @@ public class Recipe {
 	 * @param ingredients The ingredients in the recipe
 	 */
 	public Recipe(String name, String category, int nPortions, Ingredients ingredients) {
-		// TODO
+		if (name == null || name.isBlank()) throw new IllegalArgumentException("Name must be non empty string");
+		if (category == null || category.isBlank()) throw new IllegalArgumentException("Category must be non empty string");
+		if (nPortions <= 0) throw new IllegalArgumentException("Number of portions must be positive");
+		if (ingredients == null) throw new IllegalArgumentException("Ingredients cannot be null");
+		this.name = name;
+		this.category = category;
+		this.nPortions = nPortions;
+		this.ingredients = ingredients;
 	}
 
 	/**
@@ -69,7 +76,12 @@ public class Recipe {
 	 * @return The new recipe
 	 */
 	public Recipe createNPortions(int n) {
-		// TODO
+		IngredientContainer scaledIngredients = new IngredientContainer();
+		for(int i=0; i<n/nPortions; i++) {
+			scaledIngredients.addIngredients(ingredients);
+		}
+
+		return new Recipe(name, category, n, scaledIngredients);
 	}
 
 	/**

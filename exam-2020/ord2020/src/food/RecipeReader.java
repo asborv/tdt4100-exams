@@ -1,13 +1,18 @@
 package food;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RecipeReader {
 
 	// regex for column separator
 	private final String columnSeparatorRegex = "\\$";
+	private final String amountSeparatorRegex = ";";
 
 	/**
 	 * Read recipes from an InputStream with the given format:
@@ -27,7 +32,36 @@ public class RecipeReader {
 	 * @throws IOException if input (InputStream) throws IOException
 	 */
 	public List<Recipe> readRecipes(InputStream input) throws IOException {
-		// TODO
+		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+		List<Recipe> recipes = new ArrayList<>();
+
+		reader.lines()
+					.skip(1)	// Skip header
+					.forEach(line -> {
+						String[] fields = line.split(columnSeparatorRegex);
+						String[] ingredientNames = fields[3].split(amountSeparatorRegex);
+						double[] ingredientAmounts = Arrays.stream(fields[4].split(amountSeparatorRegex))
+																							 .mapToDouble(Double::parseDouble)
+																							 .toArray();
+
+
+						String name = fields[0];
+						String category = fields[1];
+						int nPortions = Integer.parseInt(fields[2]);
+						IngredientContainer ingredients = new IngredientContainer();
+
+						for (int i=0; i<ingredientNames.length; i++) {
+							ingredients.addIngredient(
+								ingredientNames[i],
+								ingredientAmounts[i]
+							);
+						}
+						
+						Recipe recipe = new Recipe(name, category, nPortions, ingredients);
+						recipes.add(recipe);
+					});
+		
+		return recipes;
 	}
 
 	public static void main(String[] args) throws IOException {
