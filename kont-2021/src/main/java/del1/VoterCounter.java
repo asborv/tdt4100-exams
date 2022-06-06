@@ -28,6 +28,7 @@ public class VoterCounter {
 	 * @throws IllegalArgumentException if the candidate is not registered
 	 */
 	public void castVote(String candidate) {
+		if (!candidates.containsKey(candidate)) throw new IllegalArgumentException();
 		candidates.computeIfPresent(candidate, (k, v) -> v + 1);
 	}
 

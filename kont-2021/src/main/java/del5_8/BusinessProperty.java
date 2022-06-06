@@ -1,7 +1,7 @@
 package del5_8;
 
 public class BusinessProperty extends Property {
-
+	
 	/**
 	 * BusinessProperty should implement the following extensions from Property. As
 	 * soon as a bid is received that is equal to or higher than the price, the
@@ -10,6 +10,14 @@ public class BusinessProperty extends Property {
 
 	public BusinessProperty(String name, int price) {
 		super(name, price);
+	}
+
+	@Override
+	public void bidReceived(String bidder, int bid) {
+		if (bid > price) {
+			setIsSold();
+		}
+		super.bidReceived(bidder, bid);
 	}
 
 	public static void main(String[] args) {
@@ -22,6 +30,5 @@ public class BusinessProperty extends Property {
 		System.out.println(p.getHighestBid());
 		// true
 		System.out.println(p.isSold());
-
 	}
 }

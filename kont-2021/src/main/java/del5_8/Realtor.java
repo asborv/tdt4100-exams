@@ -1,9 +1,15 @@
 package del5_8;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 public class Realtor implements Iterable<Property> {
 
+	private String name;
+	private double commission;
+	private Collection<Property> properties = new ArrayList<>();
+	
 	/**
 	 * Creates a Realtor object
 	 * 
@@ -11,7 +17,10 @@ public class Realtor implements Iterable<Property> {
 	 * @param commission the commission the realtor takes for a sale
 	 */
 	public Realtor(String name, double commission) {
-		// TODO
+		if (name == null || name.isBlank()) throw new IllegalArgumentException("Name must be non-empty string");
+		
+		this.name = name;
+		this.commission = commission;
 	}
 
 	/**
@@ -19,8 +28,7 @@ public class Realtor implements Iterable<Property> {
 	 * @return the name of the realtor
 	 */
 	public String getName() {
-		// TODO
-		return null;
+		return name;
 	}
 
 	/**
@@ -31,7 +39,9 @@ public class Realtor implements Iterable<Property> {
 	 *                                  and (including) 100.
 	 */
 	public void setCommission(double commission) {
-		// TODO
+		if (commission <= 0 || commission > 100) throw new IllegalArgumentException("Commission must be in range (0, 100]");
+	
+		this.commission = commission;
 	}
 
 	/**
@@ -40,7 +50,7 @@ public class Realtor implements Iterable<Property> {
 	 * @param property a property
 	 */
 	public void addProperty(Property property) {
-		// TODO
+		properties.add(property);
 	}
 
 	/**
@@ -55,14 +65,16 @@ public class Realtor implements Iterable<Property> {
 	 * @return the calculated commission of the realtor
 	 */
 	public double calculateTotalCommission() {
-		// TODO
-		return 0;
+		int bidSum = properties.stream()
+												 	 .map(Property::getHighestBid)
+													 .reduce(0, Integer::sum);
+
+		return bidSum * commission / 100;
 	}
 
 	@Override
 	public Iterator<Property> iterator() {
-		// TODO Auto-generated method stub
-		return null;
+		return properties.iterator();
 	}
 
 	/**
@@ -71,7 +83,7 @@ public class Realtor implements Iterable<Property> {
 	 *         realtor
 	 */
 	public Iterator<Property> iterable() {
-		return null;
+		return properties.iterator();	
 	}
 
 	public static void main(String[] args) {
@@ -85,5 +97,4 @@ public class Realtor implements Iterable<Property> {
 		// Should be 200
 		System.out.println(realtor.calculateTotalCommission());
 	}
-
 }
