@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public class IngredientContainer implements Ingredients {
 
-	private final Map<String, Double> ingredients = new HashMap<>();
+	private Map<String, Double> ingredients = new HashMap<>();
 
 	/**
 	 * Initializes a new, empty IngredientContainer.
@@ -24,9 +24,7 @@ public class IngredientContainer implements Ingredients {
 	 * @param ingredients Initial ingredients in the container
 	 */
 	public IngredientContainer(Ingredients ingredients) {
-		ingredients.getIngredientNames()
-							 .stream()
-							 .forEach(ingredient -> addIngredient(ingredient, getIngredientAmount(ingredient)));
+		addIngredients(ingredients);
 	}
 
 	/**
@@ -39,11 +37,10 @@ public class IngredientContainer implements Ingredients {
 	public void addIngredient(String ingredient, double amount) {
 		if (amount < 0) throw new IllegalArgumentException("Amount cannot be negaitve");
 
-		if (ingredients.get(ingredient) == null) {
-			ingredients.put(ingredient, amount);
-		} else {
-			ingredients.compute(ingredient, (k, v) -> v + amount);
-		}
+		ingredients.put(
+			ingredient,
+			getIngredientAmount(ingredient) + amount
+		);
 	}
 
 	/**
@@ -56,12 +53,18 @@ public class IngredientContainer implements Ingredients {
 	 * @throws IllegalArgumentException if amount cannot be removed from this
 	 */
 	public void removeIngredient(String ingredient, double amount) {
-		if (amount > getIngredientAmount(ingredient) || !ingredients.containsKey(ingredient)) {
-			throw new IllegalArgumentException();
-		}
+		removeIngredient(ingredient, amount, ingredients);
+		System.out.println(ingredients);
+	}
 
-		ingredients.compute(ingredient, (k, v) -> v - amount);
-		if (ingredients.get(ingredient) == 0.0) ingredients.remove(ingredient);
+	public void removeIngredient(String ingredient, double amount, Map<String, Double> ingredientsMap) {
+		if (amount > getIngredientAmount(ingredient) || !ingredientsMap.containsKey(ingredient)) {
+			throw new IllegalArgumentException();
+		} else if (amount == getIngredientAmount(ingredient)) {
+			ingredientsMap.remove(ingredient);
+		} else {
+			ingredientsMap.compute(ingredient, (k, v) -> v - amount);
+		}
 	}
 
 	/**
@@ -87,7 +90,7 @@ public class IngredientContainer implements Ingredients {
 	 */
 	@Override
 	public double getIngredientAmount(String ingredient) {
-		return ingredients.computeIfAbsent(ingredient, x -> 0.0);
+		return ingredients.getOrDefault(ingredient, 0.0);
 	}
 
 	/**
@@ -107,7 +110,7 @@ public class IngredientContainer implements Ingredients {
 
 		ingredients.entrySet()
 							 .stream()
-							 .forEach(e -> sb.append(e.getKey() + ": " + e.getValue() + "\n"));
+							 .forEach(e -> sb.append(String.format("%s: %.1f\n", e.getKey(), e.getValue())));
 
 	return sb.toString();
 	}
@@ -133,13 +136,19 @@ public class IngredientContainer implements Ingredients {
 	 * @throws IllegalArgumentException if this does not contain enough of any of the ingredients (without changing this)
 	 */
 	public void removeIngredients(Ingredients ingredients) {
+		Map<String, Double> newIngredients = new HashMap<>(this.ingredients);
+		
 		ingredients.getIngredientNames()
 							 .stream()
 							 .forEach(ingredient -> removeIngredient(
-																				ingredient,
-																				ingredients.getIngredientAmount(ingredient)
-																			));
-	}
+								 ingredient,
+								 ingredients.getIngredientAmount(ingredient),
+								 newIngredients
+							 ));
+
+			// At this point, safe to remove
+			this.ingredients = newIngredients;
+		}
 
 	/**
 	 * Checks if the all the ingredients in other is contained in this
@@ -205,11 +214,14 @@ public class IngredientContainer implements Ingredients {
 	public static void main(String[] args) {
 
 		
-		
 		final IngredientContainer container = new IngredientContainer();
 		container.addIngredient("food1", 12.0);
 		container.addIngredient("food2", 6.0);
 		container.addIngredient("food2", 2.5);
+		
+		final IngredientContainer other = new IngredientContainer();
+		other.addIngredient("food1", 1.0);
+		
 
 		// food2 should now be 8.5, with a small delta added for double rounding.
 		assertEquals(8.5, container.getIngredientAmount("food2"), 0.0001);
@@ -223,5 +235,9 @@ public class IngredientContainer implements Ingredients {
 		container.removeIngredient("food1", 10);
 		System.out.println(container);
 		assertEquals(2.0, container.getIngredientAmount("food1"), 0.0001);
+
+		// Testing if other is contained in container
+		Ingredients missing = container.missingIngredients(other);
+		System.out.println(missing);
 	}
 }
