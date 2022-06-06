@@ -65,7 +65,10 @@ public class KitchenController {
 	 */
 	@FXML
 	private void addRecipeToWeekly() {
-		// TODO
+		Recipe selectedRecipe = recipeSelector.getValue()
+																					.createNPortions(Integer.parseInt(portionField.getText()));
+		kitchen.addRecipeToWeekly(selectedRecipe);
+		updateChosen();
 	}
 
 	/**
@@ -73,7 +76,8 @@ public class KitchenController {
 	 */
 	@FXML
 	private void submitWeeklyRecipes() {
-		// TODO
+		kitchen.registerWeekly();
+		System.out.println("Registered:\n" + kitchen.getWeeklyRecipes());
 	}
 
 	/**
