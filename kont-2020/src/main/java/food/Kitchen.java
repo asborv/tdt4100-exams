@@ -16,6 +16,7 @@ public class Kitchen implements IKitchen {
 	private Collection<String> recipes = new ArrayList<>();
 	private Collection<MealOrder> orders = new ArrayList<>();
 	private Collection<PriceProvider> providers = new ArrayList<>();
+	private Collection<KitchenObserver> observers = new ArrayList<>();
 	public static int sales = 0;
 	
 	public Kitchen() {
@@ -99,9 +100,12 @@ public class Kitchen implements IKitchen {
 		}
 
 		double scale = computeActualPrice(meal, price, getCustomer(customerName));
-		customer.buyMeal(meal, price * scale);
+		double actualPrice = scale * price;
+		
+		customer.buyMeal(meal, actualPrice);
 		orders.add(customer.getLastOrderedMeal());
 		sales++;
+		observers.stream().forEach(ko -> ko.mealOrder(meal, actualPrice));
 	}
 		
 	/**
@@ -131,6 +135,7 @@ public class Kitchen implements IKitchen {
 	// Exercise 2.4 - Observerer - these may not be all methods you need to create!
 	@Override
 	public void addObserver(KitchenObserver ko) {
+		observers.add(ko);
 	}
 
 	

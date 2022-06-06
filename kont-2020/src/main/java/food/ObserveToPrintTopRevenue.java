@@ -2,13 +2,9 @@ package food;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import food.def.KitchenObserver;
 
@@ -20,8 +16,7 @@ import food.def.KitchenObserver;
  */
 public class ObserveToPrintTopRevenue implements KitchenObserver {
 
-	// Internal variables go here:
-	
+	private Map<String, Double> revenues = new HashMap<>();
 	
 	/**
 	 * 
@@ -30,7 +25,20 @@ public class ObserveToPrintTopRevenue implements KitchenObserver {
 	 * If no meal has been sold: returns an empty string.
 	 */
 	public String getTopSellers() {
-		return null; // dummy return value
+
+		StringBuilder sb = new StringBuilder();
+
+		double max = revenues.values()
+												 .stream()
+												 .max(Comparator.comparing(Double::valueOf))
+												 .orElse(0.);
+												
+		revenues.entrySet()
+						.stream()
+						.filter(e -> e.getValue() == max)
+						.forEach(e -> sb.append(e.getKey() + ": " + e.getValue() + "\n"));
+
+		return sb.toString();
 	}
 	
 
@@ -42,6 +50,12 @@ public class ObserveToPrintTopRevenue implements KitchenObserver {
 	 */
 	@Override
 	public void mealOrder(String meal, double price) {
+		if (revenues.containsKey(meal)) {
+			revenues.compute(meal, (k, v) -> v + price);
+		} else {
+			revenues.put(meal, price);
+		}
+		System.out.println(getTopSellers());
 	}
 	
 
@@ -57,7 +71,5 @@ public class ObserveToPrintTopRevenue implements KitchenObserver {
 		test.mealOrder("pancakes", 100.0);
 		System.out.println("> Only waffles: 150.0");
 		test.mealOrder("waffles", 50.0);
-		
-		
 	}
 }
