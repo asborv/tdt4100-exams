@@ -11,6 +11,7 @@ public class Kitchen {
 	Collection<Recipe> recipes = new ArrayList<>();
 	IngredientContainer storage = new IngredientContainer();
 	Collection<Recipe> weekly = new ArrayList<>();
+	Collection<KitchenObserver> observers = new ArrayList<>();
 
 	/**
 	 * Create a new kitchen with the given recipes
@@ -80,7 +81,16 @@ public class Kitchen {
 	 * fitting behavior.
 	 */
 	public void registerWeekly() {
-		// TODO
+		observers.stream()
+						 .forEach(KitchenObserver::fireWeeklyRegistered);
+	}
+
+	public void addObserver(KitchenObserver observer) {
+		observers.add(observer);
+	}
+
+	public void removeObserver(KitchenObserver observer) {
+		observers.remove(observer);
 	}
 
 	/**
