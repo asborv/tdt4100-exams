@@ -2,23 +2,22 @@ package del2;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 
 public class AppController {
 
-	// TODO - Add any needed fields here
-	@FXML
-	public TextArea output;
+	@FXML private TextArea output;
+	@FXML private TextField username;
+	@FXML private TextField password;
+
 	public static String logInSuccess = "Gratulerer du har logget inn!";
 	public static String logInFailed = "Feil brukernavn eller passord";
 
-	/**
-	 * TODO - what should be the name of this method? Uncomment this part of the
-	 * code and put it inside the correct function public void { String brukernavn;
-	 * // Extract username from FXML here String passord; // Extract password from
-	 * FXML here
-	 * 
-	 * if (brukernavn.equals("admin") && passord.equals("admin")) {
-	 * output.setText(logInSuccess); } else { output.setText(logInFailed); } }
-	 */
-
+	 @FXML
+	 private void onLogIn() {
+		 output.setText(username.getText().equals("admin") && password.getText().equals("admin")
+		 	? logInSuccess
+			: logInFailed
+		);
+ }
 }
