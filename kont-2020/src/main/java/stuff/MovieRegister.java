@@ -1,18 +1,19 @@
 package stuff;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.function.Predicate;
 
 public class MovieRegister {
 
-
-	// Add internal variables
+	private Collection<Movie> movies = new HashSet<>();
 	
 	/**
 	 * Add movie to register
 	 * @param movie
 	 */
 	public void addMovie(Movie movie) {
+		movies.add(movie);
 	}
 		
 	/**
@@ -21,7 +22,11 @@ public class MovieRegister {
 	 * @return the movie with matching title, or null if no such movie exists.
 	 */
 	Movie findMovie(String title) {
-		return null; // dummy return value
+		return filterMovies(movie -> 
+			movie.getTitle().equals(title))
+			.stream()
+			.findAny()
+			.orElse(null);
 	}
 	
 	/**
@@ -30,7 +35,9 @@ public class MovieRegister {
 	 * @return A collection of movies testing true to pred.
 	 */
 	Collection<Movie> filterMovies(Predicate<Movie> pred) {
-		return null; // dummy return value
+		return movies.stream()
+								 .filter(pred)
+								 .toList();
 	}
 	
 	/**
@@ -39,6 +46,10 @@ public class MovieRegister {
 	 * @throws IllegalStateException if the title does not exist.
 	 */
 	public void watch(String title) {
+		Movie movie = findMovie(title);
+		if (movie == null) throw new IllegalStateException("Movie does not exist");
+		
+		movie.watch();
 	}
 	
 	/**
@@ -47,10 +58,10 @@ public class MovieRegister {
 	 */
 	public static void main(String[] args) {
 		
-//		MovieRegister cb = new MovieRegister();
-//		cb.addMovie(new Movie("Das Boot"));
-//		cb.watch("Das Boot");
-//		System.out.println("Should be 1: " + cb.findMovie("Das Boot").getTimesWatched());
+		MovieRegister cb = new MovieRegister();
+		cb.addMovie(new Movie("Das Boot"));
+		cb.watch("Das Boot");
+		System.out.println("Should be 1: " + cb.findMovie("Das Boot").getTimesWatched());
 		
 	}
 
