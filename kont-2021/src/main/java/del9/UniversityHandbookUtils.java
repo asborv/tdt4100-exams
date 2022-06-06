@@ -14,8 +14,11 @@ public class UniversityHandbookUtils {
 	 * @return a list of course names
 	 */
 	public static Collection<String> getCourseNames(Collection<Course> courses) {
-		// TODO
-		return Arrays.asList();
+		if (courses == null) throw new IllegalArgumentException();
+
+		return courses.stream()
+									.map(Course::getCourseName)
+									.toList();
 	}
 
 	/**
@@ -25,8 +28,9 @@ public class UniversityHandbookUtils {
 	 */
 	public static Collection<String> getCourseProperties(Collection<Course> courses,
 			Function<Course, String> function) {
-		// TODO
-		return Arrays.asList();
+		return courses.stream()
+									.map(function)
+									.toList();
 	}
 
 	/**
@@ -36,8 +40,9 @@ public class UniversityHandbookUtils {
 	 * @return the result of applying the operator across all average grades
 	 */
 	public static double calculateGradesSummary(Collection<Course> courses, BinaryOperator<Double> operator) {
-		// TODO
-		return 0;
+		return courses.stream()
+									.map(Course::getAverageGrade)
+									.reduce(0., operator);
 	}
 
 	/**
@@ -48,8 +53,10 @@ public class UniversityHandbookUtils {
 	 *         needed to enroll in the course
 	 */
 	public static Collection<Course> getCoursesYouCanTake(Collection<Course> courses, Collection<Course> takenCourses) {
-		// TODO
-		return Arrays.asList();
+		return courses.stream()
+									.peek(System.out::println)
+									.filter(cs -> takenCourses.containsAll(cs.getPrerequisites()))
+									.toList();
 	}
 
 	public static void main(String[] args) {
@@ -75,7 +82,5 @@ public class UniversityHandbookUtils {
 
 		// Should print tdt4109, tdt4100 (order does not matter)
 		System.out.println(getCoursesYouCanTake(courses, Arrays.asList(tdt4109)));
-
 	}
-
 }
