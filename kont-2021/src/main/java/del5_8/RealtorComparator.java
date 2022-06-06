@@ -28,7 +28,7 @@ public class RealtorComparator {
 	 * 
 	 */
 	public static Comparator<Realtor> sortRealtorsByHighestBidReceived() {
-		return null;
+		return Comparator.comparing(Realtor::getHighestBid).reversed();
 	}
 
 	public static void main(String[] args) {
@@ -48,7 +48,5 @@ public class RealtorComparator {
 		// A more useful to string method or using the debugger might be helpful here
 		// Should be in the opposite direction with realtor, and then realtor2
 		System.out.println(realtors);
-
 	}
-
 }

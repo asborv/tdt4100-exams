@@ -86,6 +86,18 @@ public class Realtor implements Iterable<Property> {
 		return properties.iterator();	
 	}
 
+	public double getHighestBid() {
+		return properties.stream()
+										 .map(Property::getHighestBid)
+										 .max(Integer::compareTo)
+										 .orElse(0);
+	}
+
+	@Override
+	public String toString() {
+		return name;
+	}
+
 	public static void main(String[] args) {
 		Realtor realtor = new Realtor("test", 10);
 		// The following will only work if BusinessProperty and Property has the correct

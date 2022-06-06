@@ -14,10 +14,10 @@ public class BusinessProperty extends Property {
 
 	@Override
 	public void bidReceived(String bidder, int bid) {
+		super.bidReceived(bidder, bid);
 		if (bid > price) {
 			setIsSold();
 		}
-		super.bidReceived(bidder, bid);
 	}
 
 	public static void main(String[] args) {
