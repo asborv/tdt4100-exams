@@ -1,8 +1,12 @@
 package del4;
 
+import java.util.Set;
+
 public class Temperature {
 
-	// Add any needed fields
+	private double degrees;
+	private char scale;
+	private final static Set<Character> validScales = Set.of('C', 'F');
 	/**
 	 * 
 	 * @param degrees an arbitrary number
@@ -11,8 +15,10 @@ public class Temperature {
 	 * @throws IllegalArgumentException if scale is not 'C' or 'F'
 	 */
 	public Temperature(double degrees, char scale) {
-		// TODO
+		if (!validScales.contains(scale)) throw new IllegalArgumentException("Scale must be 'C' or 'F'");
 
+		this.degrees = degrees;
+		this.scale = scale;
 	}
 
 	/**
@@ -20,8 +26,7 @@ public class Temperature {
 	 * @return The current scale
 	 */
 	public char getScale() {
-		// TODO
-		return '0';
+		return scale;
 	}
 
 	/**
@@ -29,8 +34,7 @@ public class Temperature {
 	 * @return the current degree of this object
 	 */
 	public double getDegrees() {
-		// TODO
-		return 0;
+		return degrees;
 	}
 
 	/**
@@ -41,9 +45,11 @@ public class Temperature {
 	 *         of this temperature object is Fahrenheit, and value in Fahrenheit if
 	 *         this the scale of this temperature object is Celsius
 	 */
-	public Temperature toOther() {
-		// TODO
-		return null;
+	public void toOther() {
+		Temperature other = inOther();
+
+		this.degrees = other.degrees;
+		this.scale = other.scale;
 	}
 
 	/**
@@ -55,8 +61,9 @@ public class Temperature {
 	 *         scale of this temperature object is Celsius
 	 */
 	public Temperature inOther() {
-		// TODO
-		return null;
+		return scale == 'C'
+			 ? new Temperature(convertCelsisusToFahrenheit(degrees), 'F')
+			 : new Temperature(convertFahrenheitToCelsius(degrees), 'C');
 	}
 
 	/**
@@ -65,7 +72,9 @@ public class Temperature {
 	 * @param amount the amount to lower by
 	 */
 	public void lower(double amount) {
-		// TODO
+		if (amount < 0) throw new IllegalArgumentException("amount must be positive");
+
+		degrees -= amount;
 	}
 
 	/**
@@ -105,5 +114,4 @@ public class Temperature {
 		// Should be 10
 		System.out.println(t.getDegrees());
 	}
-
 }
