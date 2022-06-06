@@ -2,27 +2,30 @@ package food;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Predicate;
 
 public class Kitchen {
 
-	// TODO: necessary declarations
+	Collection<Recipe> recipes = new ArrayList<>();
+	IngredientContainer storage = new IngredientContainer();
+	Collection<Recipe> weekly = new ArrayList<>();
 
 	/**
 	 * Create a new kitchen with the given recipes
 	 * @param recipes The recipes the kitchen knows
 	 */
-	public Kitchen(Recipe...recipes) {
-		// TODO
+	public Kitchen(Recipe... recipes) {
+		Arrays.stream(recipes)
+					.forEach(this.recipes::add);
 	}
 
 	/**
 	 * @return The kitchen's ingredient storage
 	 */
 	public IngredientContainer getStorage() {
-		// TODO
+		return storage;
 	}
 
 	/**
@@ -34,14 +37,17 @@ public class Kitchen {
 	 * @return The recipe with the given name, or `null` if no such recipe exists 
 	 */
 	public Recipe getRecipe(String name) {
-		// TODO
+		return filterRecipes(recipe -> recipe.getName().equals(name))
+						.stream()
+						.findAny()
+						.orElse(null);
 	}
 
 	/**
 	 * @return A collection of all the recipes the kitchen knows
 	 */
 	public Collection<Recipe> getAllRecipes() {
-		// TODO
+		return new ArrayList<>(recipes);
 	}
 	
 	/**
@@ -49,7 +55,7 @@ public class Kitchen {
 	 * @param recipe The recipe to add
 	 */
 	public void addRecipeToWeekly(Recipe recipe) {
-		// TODO
+		weekly.add(recipe);
 	}
 
 	/**
@@ -57,7 +63,7 @@ public class Kitchen {
 	 * @param recipe The recipe to remove
 	 */
 	public void removeRecipeFromWeekly(Recipe recipe) {
-		// TODO
+		weekly.remove(recipe);
 	}
 
 	/**
@@ -65,7 +71,7 @@ public class Kitchen {
 	 * recipes.
 	 */
 	public void clearWeekly() {
-		// TODO
+		weekly.clear();
 	}
 
 	/**
@@ -81,7 +87,7 @@ public class Kitchen {
 	 * @return The list of recipes the kitchen will create this week
 	 */
 	public Collection<Recipe> getWeeklyRecipes() {
-		// TODO
+		return new ArrayList<>(weekly);
 	}
 
 	/**
@@ -91,7 +97,7 @@ public class Kitchen {
 	 * @return true if the kitchen has enough ingredients
 	 */
 	public boolean canCreateRecipe(Recipe recipe) {
-		// TODO
+		return storage.containsIngredients(recipe.getIngredients());
 	}
 
 	/**
@@ -101,7 +107,8 @@ public class Kitchen {
 	 * @throws an appropriate RuntimeException if there's not enough ingredients to create the given recipe.
 	 */
 	public void createRecipe(Recipe recipe) {
-		// TODO
+		if (!canCreateRecipe(recipe)) throw new IllegalArgumentException("Not enough ingredients");
+		storage.removeIngredients(recipe.getIngredients());
 	}
 	
 	/**
@@ -111,22 +118,26 @@ public class Kitchen {
 	 * @return The filtered collection of recipes
 	 */
 	public Collection<Recipe> filterRecipes(Predicate<Recipe> predicate) {
-		// TODO
+		return recipes.stream()
+									.filter(predicate)
+									.toList();
 	}
 
 	/**
 	 * @return All recipes that can be created with the current ingredient store of this kitchen
 	 */
 	public Collection<Recipe> getRecipesThatCanBeCreated() {
-		// TODO
+		return filterRecipes(this::canCreateRecipe);
 	}
 
 	/**
-	 * @param ingredient The ingredient to search for
+	 * @param ingredient The ingredient to search for, ignoring amount
 	 * @return All recipes that contains `ingredient`
 	 */
 	public Collection<Recipe> getRecipiesContainingIngredient(String ingredient) {
-		// TODO
+		return filterRecipes(recipe -> recipe.getIngredients()
+																				 .getIngredientNames()
+																				 .contains(ingredient));
 	}
 
 	// TODO: support observability 

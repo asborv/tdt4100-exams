@@ -84,6 +84,11 @@ public class Recipe {
 		return new Recipe(name, category, n, scaledIngredients);
 	}
 
+	public Recipe createNPortionsUsingDelegation(int n) {
+		ScaledIngredients scaledIngredients = new ScaledIngredients(ingredients, n/nPortions);
+		return new Recipe(name, category, n, scaledIngredients);
+	}
+
 	/**
 	 * Creates a set of sample recipes, that can be used for testing, or to get
 	 * data if you do not manage to implement `RecipeReader`.

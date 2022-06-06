@@ -1,8 +1,12 @@
 package food;
 
+import java.util.Collection;
+
 public class ScaledIngredients implements Ingredients {
 
-	// TODO: necessary declarations
+	private final Ingredients ingredients;
+	private double scale;
+	
 
 	/**
 	 * Create a new scaled ingredients, given by an original `Ingredients`-object and a scale
@@ -10,14 +14,50 @@ public class ScaledIngredients implements Ingredients {
 	 * @param scale The scale to use
 	 */
 	public ScaledIngredients(Ingredients ingredients, double scale) {
-		// TODO
+		if (ingredients == null) throw new IllegalArgumentException("ingredients must be non-null");
+		this.ingredients = ingredients;
+		this.scale = scale;
 	}
 
-	
-	// TODO: necessary methods
-	
-	
-	
+	@Override
+	public Iterable<String> ingredientNames() {
+		return ingredients.ingredientNames();
+	}
+
+	@Override
+	public Collection<String> getIngredientNames() {
+		return ingredients.getIngredientNames();
+	}
+
+	@Override
+	public double getIngredientAmount(String ingredient) {
+		return scaleIngredients(scale).getIngredientAmount(ingredient);
+	}
+
+	@Override
+	public boolean containsIngredients(Ingredients other) {
+		return scaleIngredients(scale).containsIngredients(other);
+	}
+
+	@Override
+	public Ingredients missingIngredients(Ingredients other) {
+		return scaleIngredients(scale).missingIngredients(other);
+	}
+
+	@Override
+	public Ingredients scaleIngredients(double scale) {
+		IngredientContainer scaledIngredients = new IngredientContainer();
+
+		ingredients.getIngredientNames()
+							 .stream()
+							 .forEach(ingredient -> scaledIngredients.addIngredient(
+								 ingredient,
+								 ingredients.getIngredientAmount(ingredient) * scale
+							 ));
+
+		return scaledIngredients;
+	}
+
 	// Examples of SOME use of ScaledIngredients.
 	public static void main(String[] args) {
 
