@@ -10,8 +10,8 @@ public class RebateFreeEveryThousandSale implements PriceProvider {
 
 	@Override
 	public double providePrice(String meal, double price, Customer customer) {
-		return 0; // dummy return value
+		return Kitchen.sales % 1000 == 0 && Kitchen.sales != 0
+			? 0
+			: 1;
 	}
-
-
 }
